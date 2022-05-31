@@ -1,8 +1,10 @@
 package server;
+import database.Database;
+
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.ArrayList;
 
 // A client sends messages to the server, the server spawns a thread to communicate with the client.
 // Each communication with a client is added to an array list so any message sent gets sent to every other client
@@ -18,21 +20,22 @@ public class Client {
 
     public Client(Socket socket, String username) {
         try {
+
             this.socket = socket;
             this.username = username;
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.bufferedWriter= new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
         } catch (IOException e) {
             // Gracefully close everything.
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
+
     }
 
     // Sending a message isn't blocking and can be done without spawning a thread, unlike waiting for a message.
     public void sendMessage(String message) {
         try {
-//             Initially send the username of the client.
-
             // While there is still a connection with the server, continue to scan the terminal and then send the message.
             if (socket.isConnected()) {
                 bufferedWriter.write(username + ": " + message);
@@ -59,6 +62,8 @@ public class Client {
                     try {
                         // Get the messages sent from other users and print it to the console.
                         msgFromGroupChat = bufferedReader.readLine();
+                        JTextField textField = new JTextField();
+                        textField.setText(msgFromGroupChat);
                         textArea.append(msgFromGroupChat + "\n");
                         System.out.println(msgFromGroupChat);
                     } catch (IOException e) {
@@ -72,12 +77,7 @@ public class Client {
 
     // Helper method to close everything so you don't have to repeat yourself.
     public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
-        // Note you only need to close the outer wrapper as the underlying streams are closed when you close the wrapper.
-        // Note you want to close the outermost wrapper so that everything gets flushed.
-        // Note that closing a socket will also close the socket's InputStream and OutputStream.
-        // Closing the input stream closes the socket. You need to use shutdownInput() on socket to just close the input stream.
-        // Closing the socket will also close the socket's input stream and output stream.
-        // Close the socket after closing the streams.
+
         try {
             if (bufferedReader != null) {
                 bufferedReader.close();
@@ -88,33 +88,35 @@ public class Client {
             if (socket != null) {
                 socket.close();
             }
+
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // Run the program.
-    public static void main(String[] args) throws IOException {
-
-        // Get a username for the user and a socket connection.
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter your username for the group chat: ");
-        String username = scanner.nextLine();
-        // Create a socket to connect to the server.
-        Socket socket = new Socket("localhost", 1234);
-
-        // Pass the socket and give the client a username.
-        Client client = new Client(socket, username);
-        // Infinite loop to read and send messages.
-//        client.listenForMessage();
-//        client.sendMessage("Test");
-    }
-
-    public void sendUser() {
+    public void sendUsername() {
         try {
             bufferedWriter.write(username);
             bufferedWriter.newLine();
             bufferedWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void sendFile(File selectedFile) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(selectedFile);
+            byte[] buffer = new byte[1024];
+            int bytesRead = 0;
+            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                bufferedWriter.write(String.valueOf(buffer), 0, bytesRead);
+                bufferedWriter.flush();
+            }
+            fileInputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

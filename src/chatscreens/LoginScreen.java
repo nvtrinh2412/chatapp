@@ -1,9 +1,8 @@
 package chatscreens;
 
-import Database.Database;
+import database.Database;
 import chatsession.UserSession;
 import server.Client;
-import server.ClientHandler;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -46,14 +45,19 @@ public class LoginScreen extends JFrame {
         setSize(ConfigurationDialog.WIDTH, ConfigurationDialog.HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(loginPanel);
+
         setLocationRelativeTo(null);
         setVisible(true);
+
     }
 
     private void handleLogin(String username, String password) throws IOException {
         if(Database.checkValidLogin(username,password)){
+
             Socket socket =  new Socket("localhost", 1234);
             Client client = new Client(socket,username);
+            client.sendUsername();
+
             UserSession.setUsername(username);
             UserSession.setClient(client);
             UserSession.setSocket(socket);

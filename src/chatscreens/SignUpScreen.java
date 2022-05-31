@@ -1,10 +1,11 @@
 package chatscreens;
 
-import Database.Database;
+import database.Database;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class SignUpScreen extends JDialog{
     private JTextField username;
@@ -27,6 +28,11 @@ public class SignUpScreen extends JDialog{
                 }
                 else{
                     Database.addUser(inputUsername,inputPassword);
+                    try {
+                        Database.writeFile("src/database/user.txt");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                     JOptionPane.showMessageDialog(null, "Succeed","Succeed",JOptionPane.INFORMATION_MESSAGE);
                     dispose();
                 }

@@ -5,8 +5,6 @@ package server;
 // 4. Close the streams.
 // 5. Close the socket.
 
-import chatsession.UserSession;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -29,13 +27,14 @@ public class ClientHandler implements Runnable {
         try {
             this.socket = socket;
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.bufferedWriter= new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             // When a client connects their username is sent.
-//            this.clientUsername = bufferedReader.readLine();
+
+            // read from sendUsername()
             this.clientUsername = bufferedReader.readLine();
             // Add the new client handler to the array so they can receive messages from others.
             clientHandlers.add(this);
-            broadcastMessage("SERVER: " + clientUsername + " has entered the chat!");
+            sendMessageToClient("ALL","SERVER: " + clientUsername + " has entered the chat!");
         } catch (IOException e) {
             // Close everything more gracefully.
             closeEverything(socket, bufferedReader, bufferedWriter);
@@ -55,7 +54,7 @@ public class ClientHandler implements Runnable {
                 // Read what the client sent and then send it to every other client.
                 messageFromClient = bufferedReader.readLine();
                 System.out.println(messageFromClient);
-                broadcastMessage(messageFromClient);
+                sendMessageToClient("ALL",messageFromClient);
             } catch (IOException e) {
                 // Close everything gracefully.
                 closeEverything(socket, bufferedReader, bufferedWriter);
@@ -67,30 +66,46 @@ public class ClientHandler implements Runnable {
     // Send a message through each client handler thread so that everyone gets the message.
     // Basically each client handler is a connection to a client. So for any message that
     // is received, loop through each connection and send it down it.
-    public void broadcastMessage(String messageToSend) {
-        for (ClientHandler clientHandler : clientHandlers) {
-            try {
-                // You don't want to broadcast the message to the user who sent it.
+    public void sendMessageToClient(String receiver, String messageToSend) {
+
+        if (receiver.equals("ALL")) {
+            for (ClientHandler clientHandler : clientHandlers) {
                 if (!clientHandler.clientUsername.equals(clientUsername)) {
-                    System.out.println("Sending message to " + clientHandler.clientUsername);
+
                     System.out.println("broadcastMessage: " + messageToSend);
-                    clientHandler.bufferedWriter.write(messageToSend);
-                    clientHandler.bufferedWriter.newLine();
-                    clientHandler.bufferedWriter.flush();
+                    try {
+                        clientHandler.bufferedWriter.write(messageToSend);
+                        clientHandler.bufferedWriter.newLine();
+                        clientHandler.bufferedWriter.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 }
-            } catch (IOException e) {
-                // Gracefully close everything.
-                closeEverything(socket, bufferedReader, bufferedWriter);
+            }
+        } else {
+            for (ClientHandler clientHandler : clientHandlers) {
+                if (clientHandler.clientUsername.equals(receiver)) {
+                    System.out.println("send to "+ receiver+" : "+ messageToSend);
+                    try {
+                        clientHandler.bufferedWriter.write(messageToSend);
+                        clientHandler.bufferedWriter.newLine();
+                        clientHandler.bufferedWriter.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
             }
         }
+
     }
 
-    public void privateMessage(String receiver,String messageToSend) {
+    public void privateMessage(String receiver, String messageToSend) {
         for (ClientHandler clientHandler : clientHandlers) {
             try {
                 // You don't want to broadcast the message to the user who sent it.
                 if (clientHandler.clientUsername.equals(receiver)) {
-                    System.out.println("Sending message to " + clientHandler.clientUsername);
                     System.out.println("broadcastMessage: " + messageToSend);
                     clientHandler.bufferedWriter.write(messageToSend);
                     clientHandler.bufferedWriter.newLine();
@@ -106,7 +121,7 @@ public class ClientHandler implements Runnable {
     // If the client disconnects for any reason remove them from the list so a message isn't sent down a broken connection.
     public void removeClientHandler() {
         clientHandlers.remove(this);
-        broadcastMessage("SERVER: " + clientUsername + " has left the chat!");
+        sendMessageToClient("ALL", "SERVER: " + clientUsername + " has left the chat!");
     }
 
     // Helper method to close everything so you don't have to repeat yourself.
@@ -127,10 +142,11 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
         }
     }
+
     public static void getClientHandlers() {
         System.out.println("Online users: " + clientHandlers.size());
         for (ClientHandler clientHandler : clientHandlers) {
-            System.out.println("\tUsername "+clientHandler.clientUsername);
+            System.out.println("\tUsername " + clientHandler.clientUsername);
         }
     }
 //    public static ClientHandler getClientHandler(String username) {
@@ -141,4 +157,5 @@ public class ClientHandler implements Runnable {
 //        }
 //        return null;
 //    }
+
 }

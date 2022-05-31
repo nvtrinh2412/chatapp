@@ -5,7 +5,7 @@ import server.Client;
 import java.net.Socket;
 
 public class UserSession {
-    private static String username = "default";
+    private static String username = "";
     private static Client client = null;
     private static Socket socket = null;
 
