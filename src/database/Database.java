@@ -1,18 +1,22 @@
 package database;
 
+import server.ClientHandler;
+
 import javax.swing.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Database {
 
     private static HashMap<String,String> users = new HashMap<>();
 
-    private static HashMap<Integer,String> onlineUsers = new HashMap<>();
+//    private static HashMap<Integer,String> onlineUsers = new HashMap<>();
 
+    static ArrayList<String> onlineUsers = new ArrayList<>();
     public Database(){
         try {
-            getUserFromFile("src/database/user.txt");
+            getUserFromFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -20,6 +24,7 @@ public class Database {
 
     public static boolean checkValidLogin(String username, String password){
 
+//        System.out.println(onlineUsers.toString());
         if(username == null || password ==null){
             JOptionPane.showMessageDialog(null, "Please fill username and password","Login fail",JOptionPane.ERROR_MESSAGE);
             return false;
@@ -27,7 +32,7 @@ public class Database {
         else if(users.get(username) == null){
             return false;
         }
-        else if(false){
+        else if(ClientHandler.isOnline(username)){
             JOptionPane.showMessageDialog(null, "You are already logged in","Login fail",JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -42,22 +47,21 @@ public class Database {
     public static void addUser(String username,String password){
         users.put(username,password);
     }
-    public static void addOnlineUser(Integer port, String username){onlineUsers.put(port,username);}
-    public static void printOnlineUser(){
-        for(int port :onlineUsers.keySet()){
-            System.out.println("port " + port);
-        }
-
+    public static void addOnlineUser(String username){onlineUsers.add(username);}
+    public static void removeOnlineUser(String username){onlineUsers.remove(username);}
+    public boolean isOnline(String username){
+        return onlineUsers.contains(username);
     }
 
-    public void getUserFromFile(String filename) throws IOException
+    public void getUserFromFile() throws IOException
     {
 //        if(users == null)
 //            users = new HashMap<>();
+
         BufferedReader br ;
         try
         {
-            br = new BufferedReader(new FileReader(filename));
+            br = new BufferedReader(new FileReader("user.txt"));
         }
         catch(FileNotFoundException exc)
         {
@@ -72,7 +76,6 @@ public class Database {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        System.out.println(UserCount);
         for(int i=0;i<UserCount;i++)
         {
             String ID;
@@ -80,17 +83,16 @@ public class Database {
             ID = (String) br.readLine();
             Password = (String) br.readLine();
             users.put(ID, Password);
-            System.out.println(ID + " " + Password);
         }
         br.close();
 
     }
-    public static void writeFile(String filename) throws IOException
+    public static void writeFile() throws IOException
     {
 
         FileOutputStream fout;
 
-        fout = new FileOutputStream(filename);
+        fout = new FileOutputStream("user.txt");
 
         try
         {
@@ -114,5 +116,4 @@ public class Database {
     public static HashMap<String,String> getUsers(){
         return users;
     }
-
 }

@@ -48,11 +48,13 @@ public class ChatScreen extends JFrame {
 
     private void handleActionListener() {
         sendButton.addActionListener(e -> {
+            if (!message.getText().trim().isEmpty()) {
 
-            String messageToSend = message.getText();
-            client.sendMessage(messageToSend);
-            chatMessage.append(messageToSend + "\n");
-            message.setText("");
+                String messageToSend = message.getText();
+                client.sendMessage(messageToSend);
+                chatMessage.append(messageToSend + "\n");
+                message.setText("");
+            }
 
         });
 
@@ -61,10 +63,13 @@ public class ChatScreen extends JFrame {
             public void keyPressed(KeyEvent e) {
                 super.keyPressed(e);
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    String messageToSend = message.getText();
-                    client.sendMessage(messageToSend);
-                    chatMessage.append(messageToSend + "\n");
-                    message.setText("");
+                    if (!message.getText().trim().isEmpty()) {
+
+                        String messageToSend = message.getText();
+                        client.sendMessage(messageToSend);
+                        chatMessage.append(messageToSend + "\n");
+                        message.setText("");
+                    }
                 }
             }
         });

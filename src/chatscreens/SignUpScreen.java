@@ -29,7 +29,7 @@ public class SignUpScreen extends JDialog{
                 else{
                     Database.addUser(inputUsername,inputPassword);
                     try {
-                        Database.writeFile("src/database/user.txt");
+                        Database.writeFile();
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }

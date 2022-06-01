@@ -34,7 +34,7 @@ public class ClientHandler implements Runnable {
             this.clientUsername = bufferedReader.readLine();
             // Add the new client handler to the array so they can receive messages from others.
             clientHandlers.add(this);
-            sendMessageToClient("ALL","SERVER: " + clientUsername + " has entered the chat!");
+            sendMessageToClient("ALL","User: " + clientUsername+ " has entered the chat!");
         } catch (IOException e) {
             // Close everything more gracefully.
             closeEverything(socket, bufferedReader, bufferedWriter);
@@ -121,7 +121,7 @@ public class ClientHandler implements Runnable {
     // If the client disconnects for any reason remove them from the list so a message isn't sent down a broken connection.
     public void removeClientHandler() {
         clientHandlers.remove(this);
-        sendMessageToClient("ALL", "SERVER: " + clientUsername + " has left the chat!");
+        sendMessageToClient("ALL", "User: " + clientUsername + " has left the chat!");
     }
 
     // Helper method to close everything so you don't have to repeat yourself.
@@ -149,13 +149,15 @@ public class ClientHandler implements Runnable {
             System.out.println("\tUsername " + clientHandler.clientUsername);
         }
     }
-//    public static ClientHandler getClientHandler(String username) {
-//        for (ClientHandler clientHandler : clientHandlers) {
-//            if (clientHandler.clientUsername.equals(username)) {
-//                return clientHandler;
-//            }
-//        }
-//        return null;
-//    }
+
+
+    public static boolean isOnline(String username) {
+        for (ClientHandler clientHandler : clientHandlers) {
+            if (clientHandler.clientUsername.equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

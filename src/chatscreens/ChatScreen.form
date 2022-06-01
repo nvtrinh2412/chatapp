@@ -5,7 +5,10 @@
     <constraints>
       <xy x="20" y="20" width="1243" height="400"/>
     </constraints>
-    <properties/>
+    <properties>
+      <background color="-7876870"/>
+      <foreground color="-7876870"/>
+    </properties>
     <border type="none"/>
     <children>
       <grid id="1fff8" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -13,7 +16,9 @@
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="13" vsize-policy="3" hsize-policy="1" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-7876870"/>
+        </properties>
         <border type="none"/>
         <children>
           <scrollpane id="7c0" binding="scrollPanel">
@@ -32,12 +37,15 @@
               <component id="274b5" class="javax.swing.JTextArea" binding="chatMessage">
                 <constraints/>
                 <properties>
+                  <background color="-1"/>
                   <disabledTextColor color="-16777216"/>
                   <editable value="false"/>
                   <enabled value="false"/>
                   <focusable value="false"/>
+                  <font name="Fira Code"/>
                   <lineWrap value="true"/>
                   <margin top="0" left="10" bottom="0" right="10"/>
+                  <text value=""/>
                   <wrapStyleWord value="true"/>
                 </properties>
               </component>
@@ -47,11 +55,12 @@
       </grid>
       <component id="bfd35" class="javax.swing.JTextField" binding="message">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="10" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="1" column="0" row-span="1" col-span="11" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
         <properties>
+          <background color="-1"/>
           <font name="Fira Code"/>
           <text value=""/>
         </properties>
@@ -63,20 +72,28 @@
         <properties>
           <horizontalAlignment value="0"/>
           <horizontalTextPosition value="0"/>
-          <icon value="icons/file.png"/>
+          <icon value="icons/folder.png"/>
           <iconTextGap value="4"/>
           <text value=""/>
         </properties>
       </component>
       <component id="d61fa" class="javax.swing.JButton" binding="sendButton" default-binding="true">
         <constraints>
-          <grid row="1" column="11" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="11" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <background color="-9449606"/>
+          <background color="-1"/>
+          <borderPainted value="false"/>
+          <contentAreaFilled value="false"/>
+          <focusPainted value="false"/>
+          <focusable value="false"/>
           <font name="Fira Code"/>
-          <foreground color="-1"/>
-          <text value="Send"/>
+          <foreground color="-7876870"/>
+          <icon value="icons/send.png"/>
+          <opaque value="false"/>
+          <requestFocusEnabled value="true"/>
+          <text value=""/>
+          <visible value="true"/>
         </properties>
       </component>
     </children>
